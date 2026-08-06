@@ -699,6 +699,7 @@ img {
   position: relative;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -737,25 +738,43 @@ img {
 }
 
 .contact-tile__icon {
-  flex: 1 1 auto;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
   width: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .contact-tile__icon img {
-  width: 92px;
-  max-height: 96px;
+  width: min(92px, 76%);
+  height: auto;
+  max-height: min(96px, 100%);
+  object-fit: contain;
 }
 
 .contact-tile__icon--telegram img {
-  width: 100px;
+  width: min(100px, 84%);
+  max-height: min(85px, 100%);
+}
+
+.contact-tile__icon--github img {
+  width: min(91px, 74%);
+  max-height: min(91px, 100%);
+}
+
+.contact-tile__icon--hh img {
+  width: min(100px, 80%);
+  max-height: min(77px, 100%);
 }
 
 .contact-tile__icon--linkedin::before {
   content: "";
-  width: 106px;
-  height: 113px;
+  width: min(106px, 78%);
+  aspect-ratio: 106.489 / 112.786;
+  max-height: 100%;
   display: block;
   background: var(--paper);
   mask: url("../assets/linkedin-mask.png") center / contain no-repeat;
@@ -976,10 +995,6 @@ img {
 @media (max-width: 380px) {
   .case-card {
     padding: 18px;
-  }
-
-  .contact-tile {
-    min-height: 164px;
   }
 
   .about__copy {
