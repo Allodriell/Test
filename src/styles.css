@@ -129,12 +129,14 @@ img {
 
 .hero__photo {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  transform: translate3d(0, var(--hero-shift, 0px), 0) scale(1.02);
+  transform: scale(1.02);
+  transform-origin: top center;
   will-change: transform;
 }
 
@@ -328,6 +330,7 @@ img {
 
 .about {
   --reveal: 0;
+  --about-content-width: 393px;
   width: calc(1px + (100% - 1px) * var(--reveal));
   margin-inline: auto;
   overflow: hidden;
@@ -337,7 +340,8 @@ img {
 }
 
 .about__inner {
-  width: 100%;
+  width: var(--about-content-width);
+  max-width: none;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -521,7 +525,7 @@ img {
   min-height: 0;
   overflow: visible;
   background: transparent;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .case-visual {

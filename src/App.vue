@@ -328,6 +328,8 @@ const aboutReveal = ref(0);
 const aboutReadable = ref(false);
 
 const drag = reactive({
+  pointerId: null,
+  tracking: false,
   startX: 0,
   startY: 0,
   x: 0,
@@ -401,6 +403,7 @@ const heroPhotoStyle = computed(() => ({
 
 const aboutStyle = computed(() => ({
   "--reveal": aboutReveal.value.toFixed(3),
+  "--about-content-width": `${(aboutEl.value?.parentElement?.clientWidth || 393).toFixed(2)}px`,
 }));
 
 const activeVisualClasses = computed(() => [
@@ -587,36 +590,72 @@ function setDrag(x, y) {
 function resetDrag() {
   setDrag(0, 0);
   dragging.value = false;
+  drag.tracking = false;
+  drag.pointerId = null;
 }
 
 function startDrag(event) {
   if (locked.value || (event.pointerType === "mouse" && event.button !== 0)) return;
 
-  dragging.value = true;
+  resetDrag();
+  drag.tracking = true;
+  drag.pointerId = event.pointerId;
   drag.startX = event.clientX;
   drag.startY = event.clientY;
   drag.startedAt = performance.now();
-  activeVisual.value?.setPointerCapture?.(event.pointerId);
+
+  if (event.pointerType === "mouse") {
+    dragging.value = true;
+    activeVisual.value?.setPointerCapture?.(event.pointerId);
+  }
 }
 
 function moveDrag(event) {
-  if (!dragging.value) return;
+  if (!drag.tracking || (drag.pointerId !== null && event.pointerId !== drag.pointerId)) return;
+
+  const deltaX = event.clientX - drag.startX;
+  const deltaY = event.clientY - drag.startY;
+
+  if (!dragging.value) {
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (absX < 10 && absY < 10) return;
+
+    if (absY > 10 && absY > absX * 1.12) {
+      resetDrag();
+      return;
+    }
+
+    if (absX < 16 || absX < absY * 1.25) return;
+
+    dragging.value = true;
+    drag.startedAt = performance.now();
+    activeVisual.value?.setPointerCapture?.(event.pointerId);
+  }
 
   event.preventDefault();
-  setDrag(event.clientX - drag.startX, event.clientY - drag.startY);
+  setDrag(deltaX, deltaY);
 }
 
 function endDrag(event) {
-  if (!dragging.value) return;
+  if (!drag.tracking || (drag.pointerId !== null && event.pointerId !== drag.pointerId)) return;
+
+  if (!dragging.value) {
+    resetDrag();
+    return;
+  }
 
   dragging.value = false;
+  drag.tracking = false;
   const elapsed = Math.max(1, performance.now() - drag.startedAt);
-  const velocity = Math.hypot(drag.x, drag.y) / elapsed;
-  const shouldSwipe = Math.abs(drag.x) > 92 || Math.hypot(drag.x, drag.y) > 118 || velocity > 0.65;
+  const velocity = Math.abs(drag.x) / elapsed;
+  const shouldSwipe = Math.abs(drag.x) > 92 || (Math.abs(drag.x) > 54 && velocity > 0.42);
 
   if (event.pointerId !== undefined && activeVisual.value?.hasPointerCapture?.(event.pointerId)) {
     activeVisual.value.releasePointerCapture(event.pointerId);
   }
+  drag.pointerId = null;
 
   if (shouldSwipe) {
     const exitX = drag.x === 0 ? 260 : Math.sign(drag.x) * Math.max(260, Math.abs(drag.x) * 2.4);
@@ -746,7 +785,7 @@ function updateScrollMotion() {
     heroShellHeight.value = fullHeight;
     heroHeight.value = nextHeight;
     heroFolded.value = progress > 0.98;
-    heroShift.value = reduceMotion.value ? 0 : progress * 18;
+    heroShift.value = 0;
   }
 
   if (aboutEl.value) {
