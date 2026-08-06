@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Seraphim Belousov Digital Card</title>
+    <link rel="preload" href="./assets/fonts/handjet.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="./assets/fonts/roboto-mono.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="./assets/fonts/ephesis.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="./assets/fonts/voyage-regular.otf" as="font" type="font/otf" crossorigin />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="card-page" aria-label="Seraphim Belousov digital card">
+      <section class="hero-shell" aria-label="Intro fold stage">
+        <section class="hero" id="top" aria-label="Intro">
+          <div class="hero__media">
+            <img class="hero__photo" src="./assets/hero-photo.png" alt="" draggable="false" />
+          </div>
+
+          <div class="hero__identity reveal-on-scroll is-visible">
+            <div class="hero__subtitle" aria-label="Design Engineer">
+              <img src="./assets/design.svg" alt="Design" draggable="false" />
+              <img src="./assets/engineer.svg" alt="Engineer" draggable="false" />
+            </div>
+            <div class="hero__name" aria-label="Belousov Seraphim">
+              <div class="hero__name-line hero__name-line--surname">
+                <img src="./assets/belousov.svg" alt="Belousov" draggable="false" />
+              </div>
+              <div class="hero__name-line hero__name-line--name">
+                <img src="./assets/seraphim.svg" alt="Seraphim" draggable="false" />
+              </div>
+            </div>
+            <p class="hero__caption">Building thoughtful digital experiences.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="stats" aria-label="Portfolio stats">
+        <div class="stats__row reveal-on-scroll">
+          <span class="badge badge--animated stats__label" tabindex="0" aria-label="Years Experience">
+            <span class="badge__sizer">Years Experience</span>
+            <span class="badge__stack" aria-hidden="true">
+              <span>Years Experience</span>
+              <span>Years Experience</span>
+            </span>
+          </span>
+          <span class="stats__value" data-count="3" data-suffix="+">3+</span>
+        </div>
+        <div class="stats__row reveal-on-scroll">
+          <span class="badge badge--animated stats__label" tabindex="0" aria-label="Projects">
+            <span class="badge__sizer">Projects</span>
+            <span class="badge__stack" aria-hidden="true">
+              <span>Projects</span>
+              <span>Projects</span>
+            </span>
+          </span>
+          <span class="stats__value" data-count="21" data-suffix="+">21+</span>
+        </div>
+        <div class="stats__row reveal-on-scroll">
+          <span class="badge badge--animated stats__label" tabindex="0" aria-label="Design Systems">
+            <span class="badge__sizer">Design Systems</span>
+            <span class="badge__stack" aria-hidden="true">
+              <span>Design Systems</span>
+              <span>Design Systems</span>
+            </span>
+          </span>
+          <span class="stats__value" data-count="5">5</span>
+        </div>
+      </section>
+
+      <section class="about" id="about" aria-label="About me">
+        <div class="about__inner">
+          <div class="section-title section-title--light reveal-on-scroll">
+            <p class="section-title__script">A designer's soul.</p>
+            <p class="section-title__mono">An engineer's mind.</p>
+          </div>
+
+          <div class="video-frame reveal-on-scroll" aria-label="Video frame"></div>
+
+          <p class="about__copy" aria-label="About text">
+            <span class="reveal-line" style="--i: 0"><span>I discovered design at sixteen and</span></span>
+            <span class="reveal-line" style="--i: 1"><span>never stopped exploring it. While</span></span>
+            <span class="reveal-line" style="--i: 2"><span>studying Software Engineering at</span></span>
+            <span class="reveal-line" style="--i: 3"><span>university, I continued designing,</span></span>
+            <span class="reveal-line" style="--i: 4"><span>gradually developing an</span></span>
+            <span class="reveal-line" style="--i: 5"><span>understanding of both creative and</span></span>
+            <span class="reveal-line" style="--i: 6"><span>technical disciplines. Today, that</span></span>
+            <span class="reveal-line" style="--i: 7"><span>journey shapes the way I approach</span></span>
+            <span class="reveal-line" style="--i: 8"><span>every product, balancing</span></span>
+            <span class="reveal-line" style="--i: 9"><span>aesthetics with feasibility and</span></span>
+            <span class="reveal-line" style="--i: 10"><span>creativity with engineering thinking.</span></span>
+          </p>
+        </div>
+      </section>
+
+      <section class="cases" id="cases" aria-label="Selected cases">
+        <article class="case-card" id="caseCard">
+          <div class="case-card__title-row">
+            <div class="motion-pill title-pill" id="titlePill">
+              <span class="pill-stack">
+                <span class="pill-label pill-label--current" id="titleCurrent"></span>
+                <span class="pill-label pill-label--next" id="titleNext"></span>
+              </span>
+            </div>
+            <div class="motion-pill type-pill" id="typePill">
+              <span class="pill-stack">
+                <span class="pill-label pill-label--current" id="typeCurrent"></span>
+                <span class="pill-label pill-label--next" id="typeNext"></span>
+              </span>
+            </div>
+          </div>
+
+          <div class="image-stage" id="imageStage">
+            <div class="case-visual case-visual--behind" id="behindVisual"></div>
+            <div
+              class="case-visual case-visual--active"
+              id="activeVisual"
+              role="button"
+              tabindex="0"
+              aria-label="Swipe case image"
+            ></div>
+            <button class="swipe-button" id="nextButton" type="button" aria-label="Next case">
+              &lt;&lt; SWIPE &gt;&gt;
+            </button>
+          </div>
+
+          <div class="tags-row" id="tagsRow" aria-label="Case tags"></div>
+        </article>
+
+        <div class="case-dots" id="pager" aria-hidden="true"></div>
+      </section>
+
+      <section class="contact" id="contact" aria-label="Contacts">
+        <div class="section-title section-title--light contact__title reveal-on-scroll">
+          <p class="section-title__script">Have an idea?</p>
+          <p class="section-title__mono">Let's build it</p>
+        </div>
+
+        <div class="contact-grid">
+          <a class="contact-tile reveal-on-scroll" href="#" aria-label="Telegram">
+            <span class="contact-tile__icon contact-tile__icon--telegram">
+              <img src="./assets/telegram.svg" alt="" draggable="false" />
+            </span>
+            <span class="badge badge--small">Telegram</span>
+          </a>
+          <a class="contact-tile reveal-on-scroll" href="#" aria-label="GitHub">
+            <span class="contact-tile__icon contact-tile__icon--github">
+              <img src="./assets/github.svg" alt="" draggable="false" />
+            </span>
+            <span class="badge badge--small">GitHub</span>
+          </a>
+          <a class="contact-tile reveal-on-scroll" href="#" aria-label="LinkedIn">
+            <span class="contact-tile__icon contact-tile__icon--linkedin"></span>
+            <span class="badge badge--small">Linkedin</span>
+          </a>
+          <a class="contact-tile reveal-on-scroll" href="#" aria-label="HH.ru">
+            <span class="contact-tile__icon contact-tile__icon--hh">
+              <img src="./assets/hh.svg" alt="" draggable="false" />
+            </span>
+            <span class="badge badge--small">HH.ru</span>
+          </a>
+        </div>
+      </section>
+
+      <footer class="footer" aria-label="Direct contacts">
+        <div class="footer__contacts">
+          <span class="footer__pair">
+            <span class="badge badge--small">Email:</span>
+            <a href="mailto:allodriell@gmail.com">allodriell@gmail.com</a>
+          </span>
+          <span class="footer__pair">
+            <span class="badge badge--small">Phone:</span>
+            <a href="tel:+79816847121">+7 981-684-71-21</a>
+          </span>
+        </div>
+        <div class="footer__socials">
+          <span class="badge badge--small">Telegram</span>
+          <span class="badge badge--small badge--animated" tabindex="0" aria-label="Instagram">
+            <span class="badge__sizer">Instagram</span>
+            <span class="badge__stack" aria-hidden="true">
+              <span>Instagram</span>
+              <span>Instagram</span>
+            </span>
+          </span>
+          <span class="badge badge--small badge--animated" tabindex="0" aria-label="VK">
+            <span class="badge__sizer">VK</span>
+            <span class="badge__stack" aria-hidden="true">
+              <span>VK</span>
+              <span>VK</span>
+            </span>
+          </span>
+        </div>
+      </footer>
+
+      <span class="measure measure--title" id="measureTitle"></span>
+      <span class="measure measure--type" id="measureType"></span>
+      <span class="measure measure--tag" id="measureTag"></span>
+    </main>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
