@@ -2,8 +2,8 @@
   <div class="demo-shell" :style="demoShellStyle">
     <div class="demo-device">
       <div class="demo-device__inner">
+        <img class="demo-device__mockup" :src="mockupScene" alt="" draggable="false" aria-hidden="true" />
         <div class="phone-frame" aria-label="iPhone 16 preview">
-          <img class="phone-frame__mockup" :src="iphoneMockup" alt="" draggable="false" aria-hidden="true" />
           <span class="phone-frame__island" aria-hidden="true"></span>
           <div ref="scrollViewport" class="phone-frame__screen">
             <main class="card-page" aria-label="Seraphim Belousov digital card">
@@ -227,7 +227,7 @@
 import { computed, defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 
 import heroPhoto from "../assets/hero-photo.png";
-import iphoneMockup from "../assets/iphone-16-mockup.png";
+import mockupScene from "../Mockup.png";
 import nloImage from "../assets/nlo.png";
 import skillsImage from "../assets/skills.png";
 import blendImage from "../assets/blend.png";

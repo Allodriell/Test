@@ -78,7 +78,7 @@ img {
   max-width: 100%;
 }
 
-.phone-frame__mockup,
+.demo-device__mockup,
 .phone-frame__island,
 .demo-caption {
   display: none;
@@ -871,25 +871,7 @@ img {
     transform-origin: top left;
   }
 
-  .phone-frame {
-    position: absolute;
-    left: 769px;
-    top: 144px;
-    width: 382px;
-    height: 791px;
-  }
-
-  .phone-frame::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 4;
-    border-radius: 56px;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
-    pointer-events: none;
-  }
-
-  .phone-frame__mockup {
+  .demo-device__mockup {
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -898,18 +880,27 @@ img {
     height: 100%;
     object-fit: fill;
     pointer-events: none;
+    user-select: none;
+  }
+
+  .phone-frame {
+    position: absolute;
+    left: 781px;
+    top: 155px;
+    z-index: 2;
+    width: 360px;
+    height: 770px;
   }
 
   .phone-frame__screen {
     position: absolute;
+    inset: 0;
     z-index: 2;
-    left: 11px;
-    top: 10px;
-    width: 362px;
-    height: 772px;
+    width: 100%;
+    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    border-radius: 48px;
+    border-radius: 40px;
     background: var(--paper);
     scrollbar-width: none;
     overscroll-behavior: contain;
@@ -921,35 +912,38 @@ img {
   }
 
   .phone-frame__island {
-    display: none;
+    position: absolute;
+    left: 132px;
+    top: 10px;
+    z-index: 5;
+    display: block;
+    width: 94px;
+    height: 24px;
+    border-radius: 999px;
+    background: #050505;
+    pointer-events: none;
+  }
+
+  .phone-frame__island::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: 7px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 45% 45%, #182454 0 18%, #060916 58%, #020202 100%);
   }
 
   .phone-frame__screen .card-page {
     width: 393px;
     min-height: 100%;
-    margin: 0 0 0 -15px;
+    margin: 0 0 0 -16.5px;
     box-shadow: none;
   }
 
   .demo-caption {
-    position: absolute;
-    left: 50%;
-    top: 978px;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    align-items: center;
-    margin: 0;
-    transform: translateX(-50%);
-    color: #000;
-    font-family: "Handjet Local", "Roboto Mono Local", monospace;
-    font-size: 24px;
-    font-weight: 500;
-    line-height: 1.25;
-    letter-spacing: 0.06em;
-    font-variation-settings: "ELGR" 1, "ELSH" 2;
-    text-align: center;
-    white-space: nowrap;
+    display: none;
   }
 
   .demo-caption p {
