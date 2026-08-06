@@ -40,7 +40,7 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-swipe: cubic-bezier(0.33, 1, 0.68, 1);
-  --page-max: 430px;
+  --page-max: 393px;
 }
 
 * {
@@ -196,12 +196,12 @@ img {
 }
 
 .hero__name-line--surname img {
-  width: 377px;
+  width: min(377px, calc(100% - 16px));
   height: auto;
 }
 
 .hero__name-line--name img {
-  width: 376px;
+  width: min(376px, calc(100% - 16px));
   height: auto;
   margin-left: auto;
 }
@@ -337,7 +337,7 @@ img {
 }
 
 .about__inner {
-  width: min(100vw, var(--page-max));
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -422,7 +422,9 @@ img {
 .case-card {
   position: relative;
   width: 100%;
-  height: 462px;
+  aspect-ratio: 361 / 462;
+  min-height: 0;
+  height: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -642,7 +644,7 @@ img {
   flex-wrap: wrap;
   align-content: flex-end;
   align-items: flex-end;
-  gap: 10px;
+  gap: 6px 10px;
 }
 
 .tag-pill {
@@ -672,15 +674,18 @@ img {
 }
 
 .contact-grid {
-  width: calc(100% + 32px);
+  width: 100%;
+  height: 330px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   padding: 24px 16px;
 }
 
 .contact-tile {
   position: relative;
-  min-height: 180px;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -935,10 +940,10 @@ img {
     background: radial-gradient(circle at 45% 45%, #182454 0 18%, #060916 58%, #020202 100%);
   }
 
-  .phone-frame__screen .card-page {
-    width: 393px;
+.phone-frame__screen .card-page {
+    width: 100%;
     min-height: 100%;
-    margin: 0 0 0 -16.5px;
+    margin: 0;
     box-shadow: none;
   }
 
