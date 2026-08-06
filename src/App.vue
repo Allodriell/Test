@@ -98,8 +98,8 @@
           <div
             class="motion-pill title-pill"
             :class="{ 'is-changing-text': titlePill.changing, 'is-resetting': titlePill.resetting }"
-            :style="{ width: `${titlePill.width}px` }"
           >
+            <span class="pill-sizer" aria-hidden="true">{{ titlePill.changing ? titlePill.next : titlePill.current }}</span>
             <span class="pill-stack">
               <span class="pill-label pill-label--current">{{ titlePill.current }}</span>
               <span class="pill-label pill-label--next">{{ titlePill.next }}</span>
@@ -108,8 +108,8 @@
           <div
             class="motion-pill type-pill"
             :class="{ 'is-changing-text': typePill.changing, 'is-resetting': typePill.resetting }"
-            :style="{ width: `${typePill.width}px` }"
           >
+            <span class="pill-sizer" aria-hidden="true">{{ typePill.changing ? typePill.next : typePill.current }}</span>
             <span class="pill-stack">
               <span class="pill-label pill-label--current">{{ typePill.current }}</span>
               <span class="pill-label pill-label--next">{{ typePill.next }}</span>
@@ -151,8 +151,9 @@
             :key="tag.key"
             class="motion-pill tag-pill"
             :class="{ 'is-changing-text': tag.changing, 'is-removing': tag.removing }"
-            :style="{ width: `${tag.width}px`, opacity: tag.opacity }"
+            :style="{ opacity: tag.opacity }"
           >
+            <span class="pill-sizer" aria-hidden="true">{{ tag.next || tag.current }}</span>
             <span class="pill-stack">
               <span class="pill-label pill-label--current">{{ tag.current }}</span>
               <span class="pill-label pill-label--next">{{ tag.next }}</span>
@@ -433,6 +434,12 @@ function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, reduceMotion.value ? 1 : ms));
 }
 
+function waitForPaint() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+}
+
 function isFrameScrollerActive() {
   return frameActive.value && scrollViewport.value;
 }
@@ -504,6 +511,7 @@ async function settlePill(pill, item, key, type) {
   pill.next = "";
   pill.width = measurePill(item[key], type);
   await nextTick();
+  await waitForPaint();
   pill.resetting = false;
 }
 

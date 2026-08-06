@@ -465,7 +465,8 @@ img {
 }
 
 .title-pill {
-  width: 39px;
+  width: fit-content;
+  max-width: 100%;
   height: 29px;
   font-family: "Handjet Local", "Roboto Mono Local", monospace;
   font-size: 20px;
@@ -475,7 +476,8 @@ img {
 }
 
 .type-pill {
-  width: 112px;
+  width: fit-content;
+  max-width: 100%;
   height: 24px;
   border-radius: 31px;
   font-family: "Handjet Local", "Roboto Mono Local", monospace;
@@ -642,18 +644,29 @@ img {
   min-height: 14px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-start;
   align-content: flex-end;
   align-items: flex-end;
   gap: 6px 10px;
 }
 
 .tag-pill {
-  width: 0;
+  width: fit-content;
+  max-width: 100%;
+  flex: 0 0 auto;
   height: 14px;
   font-family: "Roboto Mono Local", Consolas, monospace;
   font-size: 8px;
   line-height: 1.25;
   letter-spacing: 0.06em;
+}
+
+.pill-sizer {
+  display: block;
+  min-width: 0;
+  padding: 2px 6px;
+  visibility: hidden;
+  white-space: nowrap;
 }
 
 .tag-pill.is-removing {
@@ -940,7 +953,7 @@ img {
     background: radial-gradient(circle at 45% 45%, #182454 0 18%, #060916 58%, #020202 100%);
   }
 
-.phone-frame__screen .card-page {
+  .phone-frame__screen .card-page {
     width: 100%;
     min-height: 100%;
     margin: 0;
