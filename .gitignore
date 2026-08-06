@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.deploy/
+qa-*.png
+assets/fonts/_tmp/
