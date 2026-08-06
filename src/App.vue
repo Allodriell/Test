@@ -368,14 +368,20 @@ let motionListener;
 let frameQuery;
 let frameListener;
 
+const demoMetrics = {
+  width: 1920,
+  height: 1080,
+};
+const framedHeroHeight = 852;
+
 const currentCase = computed(() => cases[current.value]);
 const behindCase = computed(() => cases[behindIndex.value]);
 const casePageLabel = computed(() => `${current.value + 1}/${cases.length}`);
 
 const demoShellStyle = computed(() => ({
   "--device-scale": deviceScale.value.toFixed(3),
-  "--device-width": `${(425 * deviceScale.value).toFixed(2)}px`,
-  "--device-height": `${(952 * deviceScale.value).toFixed(2)}px`,
+  "--device-width": `${(demoMetrics.width * deviceScale.value).toFixed(2)}px`,
+  "--device-height": `${(demoMetrics.height * deviceScale.value).toFixed(2)}px`,
 }));
 
 const heroShellStyle = computed(() => {
@@ -450,13 +456,11 @@ function getRelativeTop(element) {
 }
 
 function updateDeviceScale() {
-  const frameWidth = 425;
-  const frameHeightWithCaption = 952;
-  const availableWidth = Math.max(320, window.innerWidth - 56);
-  const availableHeight = Math.max(560, window.innerHeight - 48);
-  const nextScale = Math.min(1, availableWidth / frameWidth, availableHeight / frameHeightWithCaption);
+  const availableWidth = Math.max(320, window.innerWidth);
+  const availableHeight = Math.max(560, window.innerHeight);
+  const nextScale = Math.min(availableWidth / demoMetrics.width, availableHeight / demoMetrics.height);
 
-  deviceScale.value = clamp(nextScale, 0.62, 1);
+  deviceScale.value = clamp(nextScale, 0.34, 1.5);
 }
 
 function setupFramePreference() {
@@ -725,7 +729,7 @@ function updateScrollMotion() {
   const viewport = getMotionViewportHeight();
 
   if (hero.value && heroShell.value) {
-    const fullHeight = Math.max(viewport, 548);
+    const fullHeight = isFrameScrollerActive() ? framedHeroHeight : Math.max(viewport, 548);
     const foldedHeight = Math.min(548, fullHeight);
     const foldDistance = Math.max(1, fullHeight - foldedHeight);
     const progress = reduceMotion.value ? 0 : clamp(getScrollTop() / foldDistance, 0, 1);

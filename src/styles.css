@@ -852,7 +852,7 @@ img {
     min-height: 100svh;
     display: grid;
     place-items: center;
-    padding: 24px;
+    padding: 0;
     overflow: hidden;
     background: var(--paper);
   }
@@ -864,15 +864,19 @@ img {
   }
 
   .demo-device__inner {
-    width: 425px;
+    position: relative;
+    width: 1920px;
+    height: 1080px;
     transform: scale(var(--device-scale, 1));
-    transform-origin: top center;
+    transform-origin: top left;
   }
 
   .phone-frame {
-    position: relative;
-    width: 425px;
-    height: 884px;
+    position: absolute;
+    left: 769px;
+    top: 144px;
+    width: 382px;
+    height: 791px;
   }
 
   .phone-frame::after {
@@ -880,11 +884,8 @@ img {
     position: absolute;
     inset: 0;
     z-index: 4;
-    border: 4px solid #111;
-    border-radius: 54px;
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.22),
-      0 12px 36px rgba(0, 0, 0, 0.08);
+    border-radius: 56px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
     pointer-events: none;
   }
 
@@ -902,13 +903,13 @@ img {
   .phone-frame__screen {
     position: absolute;
     z-index: 2;
-    left: 16px;
-    top: 16px;
-    width: 393px;
-    height: 852px;
+    left: 11px;
+    top: 10px;
+    width: 362px;
+    height: 772px;
     overflow-x: hidden;
     overflow-y: auto;
-    border-radius: 44px;
+    border-radius: 48px;
     background: var(--paper);
     scrollbar-width: none;
     overscroll-behavior: contain;
@@ -920,33 +921,26 @@ img {
   }
 
   .phone-frame__island {
-    position: absolute;
-    left: 50%;
-    top: 23px;
-    z-index: 5;
-    display: block;
-    width: 76px;
-    height: 18px;
-    transform: translateX(-50%);
-    border-radius: 999px;
-    background: #050505;
-    box-shadow: inset -10px 0 10px rgba(74, 94, 129, 0.36);
-    pointer-events: none;
+    display: none;
   }
 
   .phone-frame__screen .card-page {
-    width: 100%;
+    width: 393px;
     min-height: 100%;
-    margin: 0;
+    margin: 0 0 0 -15px;
     box-shadow: none;
   }
 
   .demo-caption {
+    position: absolute;
+    left: 50%;
+    top: 978px;
     display: flex;
     flex-direction: column;
     gap: 7px;
     align-items: center;
-    margin-top: 24px;
+    margin: 0;
+    transform: translateX(-50%);
     color: #000;
     font-family: "Handjet Local", "Roboto Mono Local", monospace;
     font-size: 24px;
