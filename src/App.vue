@@ -375,7 +375,6 @@ const demoMetrics = {
   width: 1920,
   height: 1080,
 };
-const framedHeroHeight = 852;
 
 const currentCase = computed(() => cases[current.value]);
 const behindCase = computed(() => cases[behindIndex.value]);
@@ -776,7 +775,7 @@ function updateScrollMotion() {
   const viewport = getMotionViewportHeight();
 
   if (hero.value && heroShell.value) {
-    const fullHeight = isFrameScrollerActive() ? framedHeroHeight : Math.max(viewport, 548);
+    const fullHeight = Math.max(viewport, 548);
     const foldedHeight = Math.min(548, fullHeight);
     const foldDistance = Math.max(1, fullHeight - foldedHeight);
     const progress = reduceMotion.value ? 0 : clamp(getScrollTop() / foldDistance, 0, 1);
