@@ -14,7 +14,19 @@
               aria-live="polite"
             >
               <div class="loading-overlay__message">
-                <p :key="loadingGreetingIndex" class="loading-greeting">{{ activeLoadingMessage }}</p>
+                <div
+                  class="loading-phrase"
+                  :class="{
+                    'is-visible': loadingGreetingVisible,
+                  }"
+                >
+                  <p class="loading-greeting" :class="{ 'is-active': loadingActiveGreetingLayer === 'a' }">
+                    {{ loadingGreetingLayerA }}
+                  </p>
+                  <p class="loading-greeting" :class="{ 'is-active': loadingActiveGreetingLayer === 'b' }">
+                    {{ loadingGreetingLayerB }}
+                  </p>
+                </div>
               </div>
               <p class="loading-status" aria-label="Loading">
                 Loading<span class="loading-dots" aria-hidden="true">
@@ -319,6 +331,7 @@ const contactTiles = [
 const footerAnimatedSocials = ["Instagram", "VK"];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
 const loadingStepDuration = 2598;
+const loadingCrossfadeDuration = 900;
 const loadingExitDuration = 600;
 
 const heroShell = ref(null);
@@ -338,6 +351,10 @@ const reduceMotion = ref(false);
 const loadingMounted = ref(true);
 const loadingLeaving = ref(false);
 const loadingGreetingIndex = ref(0);
+const loadingActiveGreetingLayer = ref("a");
+const loadingGreetingLayerA = ref(loadingMessages[0]);
+const loadingGreetingLayerB = ref("");
+const loadingGreetingVisible = ref(false);
 const current = ref(0);
 const behindIndex = ref(1);
 const locked = ref(false);
@@ -410,7 +427,6 @@ const demoMetrics = {
 const currentCase = computed(() => cases[current.value]);
 const behindCase = computed(() => cases[behindIndex.value]);
 const casePageLabel = computed(() => `${current.value + 1}/${cases.length}`);
-const activeLoadingMessage = computed(() => loadingMessages[loadingGreetingIndex.value] || loadingMessages[0]);
 
 const demoShellStyle = computed(() => ({
   "--device-scale": deviceScale.value.toFixed(3),
@@ -498,11 +514,27 @@ function finishLoading() {
   }, loadingExitDuration);
 }
 
+function switchLoadingMessage(index) {
+  if (index === loadingGreetingIndex.value) return;
+  const nextLayer = loadingActiveGreetingLayer.value === "a" ? "b" : "a";
+  if (nextLayer === "a") {
+    loadingGreetingLayerA.value = loadingMessages[index] || "";
+  } else {
+    loadingGreetingLayerB.value = loadingMessages[index] || "";
+  }
+  loadingGreetingIndex.value = index;
+  loadingActiveGreetingLayer.value = nextLayer;
+}
+
 function startLoadingSequence() {
   clearLoadingTimers();
   loadingMounted.value = true;
   loadingLeaving.value = false;
   loadingGreetingIndex.value = 0;
+  loadingActiveGreetingLayer.value = "a";
+  loadingGreetingLayerA.value = loadingMessages[0];
+  loadingGreetingLayerB.value = "";
+  loadingGreetingVisible.value = false;
   document.body.classList.add("is-loading-card");
   scrollViewport.value?.scrollTo?.({ top: 0, behavior: "instant" });
   window.scrollTo?.({ top: 0, behavior: "instant" });
@@ -512,11 +544,16 @@ function startLoadingSequence() {
     return;
   }
 
+  queueLoadingTimer(() => {
+    loadingGreetingVisible.value = true;
+  }, 120);
+
   loadingMessages.forEach((_, index) => {
     if (index === 0) return;
-    queueLoadingTimer(() => {
-      loadingGreetingIndex.value = index;
-    }, index * loadingStepDuration);
+    queueLoadingTimer(
+      () => switchLoadingMessage(index),
+      index * loadingStepDuration - loadingCrossfadeDuration / 2,
+    );
   });
 
   queueLoadingTimer(finishLoading, (loadingMessages.length - 0.2303) * loadingStepDuration);
