@@ -5,7 +5,28 @@
         <img class="demo-device__mockup" :src="mockupScene" alt="" draggable="false" aria-hidden="true" />
         <div class="phone-frame" aria-label="iPhone 16 preview">
           <span class="phone-frame__island" aria-hidden="true"></span>
-          <div ref="scrollViewport" class="phone-frame__screen">
+          <div ref="scrollViewport" class="phone-frame__screen" :class="{ 'is-loading': loadingMounted }">
+            <div
+              v-if="loadingMounted"
+              class="loading-overlay"
+              :class="{ 'is-leaving': loadingLeaving }"
+              role="status"
+              aria-live="polite"
+            >
+              <div class="loading-overlay__message">
+                <p :key="loadingGreetingIndex" class="loading-greeting">{{ activeLoadingMessage }}</p>
+              </div>
+              <p class="loading-status" aria-label="Loading">
+                Loading
+                <span class="loading-dots" aria-hidden="true">
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                  <span>.</span>
+                </span>
+              </p>
+            </div>
             <main class="card-page" aria-label="Seraphim Belousov digital card">
     <section
       ref="heroShell"
@@ -299,6 +320,7 @@ const contactTiles = [
 ];
 
 const footerAnimatedSocials = ["Instagram", "VK"];
+const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
 
 const heroShell = ref(null);
 const hero = ref(null);
@@ -314,6 +336,9 @@ const measureType = ref(null);
 const measureTag = ref(null);
 
 const reduceMotion = ref(false);
+const loadingMounted = ref(true);
+const loadingLeaving = ref(false);
+const loadingGreetingIndex = ref(0);
 const current = ref(0);
 const behindIndex = ref(1);
 const locked = ref(false);
@@ -376,6 +401,7 @@ let motionQuery;
 let motionListener;
 let frameQuery;
 let frameListener;
+const loadingTimers = [];
 
 const demoMetrics = {
   width: 1920,
@@ -385,6 +411,7 @@ const demoMetrics = {
 const currentCase = computed(() => cases[current.value]);
 const behindCase = computed(() => cases[behindIndex.value]);
 const casePageLabel = computed(() => `${current.value + 1}/${cases.length}`);
+const activeLoadingMessage = computed(() => loadingMessages[loadingGreetingIndex.value] || loadingMessages[0]);
 
 const demoShellStyle = computed(() => ({
   "--device-scale": deviceScale.value.toFixed(3),
@@ -450,6 +477,50 @@ function waitForPaint() {
   return new Promise((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(resolve));
   });
+}
+
+function queueLoadingTimer(callback, delay) {
+  const timer = window.setTimeout(callback, reduceMotion.value ? Math.min(delay, 180) : delay);
+  loadingTimers.push(timer);
+  return timer;
+}
+
+function clearLoadingTimers() {
+  while (loadingTimers.length) {
+    window.clearTimeout(loadingTimers.pop());
+  }
+}
+
+function finishLoading() {
+  loadingLeaving.value = true;
+  queueLoadingTimer(() => {
+    loadingMounted.value = false;
+    document.body.classList.remove("is-loading-card");
+  }, 720);
+}
+
+function startLoadingSequence() {
+  clearLoadingTimers();
+  loadingMounted.value = true;
+  loadingLeaving.value = false;
+  loadingGreetingIndex.value = 0;
+  document.body.classList.add("is-loading-card");
+  scrollViewport.value?.scrollTo?.({ top: 0, behavior: "instant" });
+  window.scrollTo?.({ top: 0, behavior: "instant" });
+
+  if (reduceMotion.value) {
+    queueLoadingTimer(finishLoading, 420);
+    return;
+  }
+
+  loadingMessages.forEach((_, index) => {
+    if (index === 0) return;
+    queueLoadingTimer(() => {
+      loadingGreetingIndex.value = index;
+    }, index * 1180);
+  });
+
+  queueLoadingTimer(finishLoading, loadingMessages.length * 1180 + 120);
 }
 
 function isFrameScrollerActive() {
@@ -913,6 +984,7 @@ const AnimatedBadge = defineComponent({
 onMounted(async () => {
   setupFramePreference();
   setupMotionPreference();
+  startLoadingSequence();
 
   if (document.fonts?.ready) {
     await document.fonts.ready;
@@ -935,6 +1007,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  clearLoadingTimers();
+  document.body.classList.remove("is-loading-card");
   revealObserver?.disconnect();
   countObserver?.disconnect();
   window.removeEventListener("scroll", requestScrollTick);
