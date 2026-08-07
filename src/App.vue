@@ -210,12 +210,14 @@
           v-for="tile in contactTiles"
           :key="tile.label"
           class="contact-tile reveal-on-scroll"
-          href="#"
-          :aria-label="tile.label"
-          @click.prevent
+          :href="tile.href"
+          :aria-label="tile.ariaLabel"
+          :target="tile.external ? '_blank' : undefined"
+          :rel="tile.external ? 'noreferrer' : undefined"
         >
           <span class="contact-tile__icon" :class="tile.iconClass">
             <img v-if="tile.icon" :src="tile.icon" alt="" draggable="false" />
+            <span v-else class="contact-tile__glyph">{{ tile.glyph }}</span>
           </span>
           <span class="badge badge--small">{{ tile.label }}</span>
         </a>
@@ -234,12 +236,16 @@
     </section>
 
     <footer class="footer" aria-label="Direct contacts">
-      <AnimatedBadge
-        v-for="social in footerAnimatedSocials"
-        :key="social"
-        class="badge--small"
-        :label="social"
-      />
+      <a
+        v-for="link in footerLinks"
+        :key="link.label"
+        class="badge badge--small footer__link"
+        :href="link.href"
+        :target="link.external ? '_blank' : undefined"
+        :rel="link.external ? 'noreferrer' : undefined"
+      >
+        {{ link.label }}
+      </a>
     </footer>
 
     <span ref="measureTitle" class="measure measure--title"></span>
@@ -334,12 +340,14 @@
                     v-for="tile in contactTiles"
                     :key="`detail-${tile.label}`"
                     class="contact-tile"
-                    href="#"
-                    :aria-label="tile.label"
-                    @click.prevent
+                    :href="tile.href"
+                    :aria-label="tile.ariaLabel"
+                    :target="tile.external ? '_blank' : undefined"
+                    :rel="tile.external ? 'noreferrer' : undefined"
                   >
                     <span class="contact-tile__icon" :class="tile.iconClass">
                       <img v-if="tile.icon" :src="tile.icon" alt="" draggable="false" />
+                      <span v-else class="contact-tile__glyph">{{ tile.glyph }}</span>
                     </span>
                     <span class="badge badge--small">{{ tile.label }}</span>
                   </a>
@@ -358,12 +366,16 @@
               </section>
 
               <footer class="footer" aria-label="Direct contacts">
-                <AnimatedBadge
-                  v-for="social in footerAnimatedSocials"
-                  :key="`detail-${social}`"
-                  class="badge--small"
-                  :label="social"
-                />
+                <a
+                  v-for="link in footerLinks"
+                  :key="`detail-${link.label}`"
+                  class="badge badge--small footer__link"
+                  :href="link.href"
+                  :target="link.external ? '_blank' : undefined"
+                  :rel="link.external ? 'noreferrer' : undefined"
+                >
+                  {{ link.label }}
+                </a>
               </footer>
             </article>
           </div>
@@ -391,7 +403,6 @@ import belousovText from "../assets/belousov.svg";
 import seraphimText from "../assets/seraphim.svg";
 import telegramIcon from "../assets/contact-telegram.svg";
 import githubIcon from "../assets/contact-github.svg";
-import linkedinIcon from "../assets/contact-linkedin.svg";
 import hhIcon from "../assets/contact-hh.svg";
 import nloDetailHero from "../assets/case-nlo-hero.png";
 import nloDetailLendings from "../assets/case-nlo-lendings.png";
@@ -587,14 +598,52 @@ const aboutLines = [
   "creativity with engineering thinking.",
 ];
 
+const telegramUrl = "https://t.me/allodriell";
+const githubUrl = "https://github.com/Allodriell";
+const hhUrl = "https://hh.ru/resume/d41ee788ff0e61a5950039ed1f53446f465153?hhtmFrom=applicant_profile";
+const emailUrl = "mailto:allodriell@gmail.com";
+
 const contactTiles = [
-  { label: "Telegram", icon: telegramIcon, iconClass: "contact-tile__icon--telegram" },
-  { label: "GitHub", icon: githubIcon, iconClass: "contact-tile__icon--github" },
-  { label: "Linkedin", icon: linkedinIcon, iconClass: "contact-tile__icon--linkedin" },
-  { label: "HH.ru", icon: hhIcon, iconClass: "contact-tile__icon--hh" },
+  {
+    label: "Telegram",
+    href: telegramUrl,
+    ariaLabel: "Open Telegram",
+    external: true,
+    icon: telegramIcon,
+    iconClass: "contact-tile__icon--telegram",
+  },
+  {
+    label: "GitHub",
+    href: githubUrl,
+    ariaLabel: "Open GitHub",
+    external: true,
+    icon: githubIcon,
+    iconClass: "contact-tile__icon--github",
+  },
+  {
+    label: "Email",
+    href: emailUrl,
+    ariaLabel: "Send email",
+    external: false,
+    icon: null,
+    iconClass: "contact-tile__icon--email",
+    glyph: "@",
+  },
+  {
+    label: "HH.ru",
+    href: hhUrl,
+    ariaLabel: "Open HH resume",
+    external: true,
+    icon: hhIcon,
+    iconClass: "contact-tile__icon--hh",
+  },
 ];
 
-const footerAnimatedSocials = ["Instagram", "VK", "Twitter"];
+const footerLinks = [
+  { label: "Telegram", href: telegramUrl, external: true },
+  { label: "GitHub", href: githubUrl, external: true },
+  { label: "HH.ru", href: hhUrl, external: true },
+];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
 const loadingStepDuration = 2400;
 const loadingCrossfadeDuration = 820;

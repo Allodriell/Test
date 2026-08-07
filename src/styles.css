@@ -957,16 +957,24 @@ img {
   object-fit: contain;
 }
 
+.contact-tile__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: "Handjet Local", "Roboto Mono Local", monospace;
+  font-size: 104px;
+  line-height: 1;
+  font-variation-settings: "ELGR" 1, "ELSH" 2;
+}
+
 .contact-tile__icon--telegram img {
   aspect-ratio: 95.0938 / 93;
 }
 
 .contact-tile__icon--github img {
   aspect-ratio: 91 / 91;
-}
-
-.contact-tile__icon--linkedin img {
-  aspect-ratio: 96.6953 / 93;
 }
 
 .contact-tile__icon--hh img {
@@ -1257,6 +1265,11 @@ img {
   color: var(--ink);
   white-space: nowrap;
   word-break: break-word;
+}
+
+.footer__link:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
 }
 
 .reveal-on-scroll {
