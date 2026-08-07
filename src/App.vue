@@ -3,6 +3,8 @@
     <div class="demo-device">
       <div class="demo-device__inner">
         <img class="demo-device__mockup" :src="mockupScene" alt="" draggable="false" aria-hidden="true" />
+        <img class="demo-flower demo-flower--left" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
+        <img class="demo-flower demo-flower--right" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
         <div class="phone-frame" aria-label="iPhone 16 preview">
           <span class="phone-frame__island" aria-hidden="true"></span>
           <div
@@ -392,6 +394,7 @@ import { computed, defineComponent, h, nextTick, onBeforeUnmount, onMounted, rea
 
 import heroPhoto from "../assets/hero-photo.png";
 import mockupScene from "../Mockup.png";
+import flowerScene from "../Flower L.png";
 import nloImage from "../assets/nlo.png";
 import skillsImage from "../assets/skills.png";
 import blendImage from "../assets/blend.png";

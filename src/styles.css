@@ -87,6 +87,7 @@ img {
 }
 
 .demo-device__mockup,
+.demo-flower,
 .phone-frame__island,
 .demo-caption {
   display: none;
@@ -1365,6 +1366,27 @@ img {
     object-fit: fill;
     pointer-events: none;
     user-select: none;
+  }
+
+  .demo-flower {
+    position: absolute;
+    top: 149px;
+    z-index: 1;
+    display: block;
+    width: 393px;
+    height: 730px;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .demo-flower--left {
+    left: 0;
+  }
+
+  .demo-flower--right {
+    right: 0;
+    transform: scaleX(-1);
   }
 
   .phone-frame {
