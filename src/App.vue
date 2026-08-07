@@ -5,7 +5,11 @@
         <img class="demo-device__mockup" :src="mockupScene" alt="" draggable="false" aria-hidden="true" />
         <div class="phone-frame" aria-label="iPhone 16 preview">
           <span class="phone-frame__island" aria-hidden="true"></span>
-          <div ref="scrollViewport" class="phone-frame__screen" :class="{ 'is-loading': loadingMounted }">
+          <div
+            ref="scrollViewport"
+            class="phone-frame__screen"
+            :class="{ 'is-loading': loadingMounted, 'is-case-open': caseDetailMounted }"
+          >
             <div
               v-if="loadingMounted"
               class="loading-overlay"
@@ -161,8 +165,9 @@
             :style="activeVisualStyle"
             role="button"
             tabindex="0"
-            aria-label="Swipe case image"
+            aria-label="Open case or swipe case image"
             @pointerdown="startDrag"
+            @click="openCaseDetail"
             @keydown="handleCaseKey"
           >
             <img :src="currentCase.image" alt="" draggable="false" />
@@ -243,6 +248,107 @@
     <span ref="measureType" class="measure measure--type"></span>
     <span ref="measureTag" class="measure measure--tag"></span>
             </main>
+
+            <div
+              v-if="caseTransitionMounted"
+              class="case-transition-clone"
+              :class="caseTransitionClasses"
+              :style="caseTransitionStyle"
+              aria-hidden="true"
+            >
+              <img :src="openedCaseDetail.hero" alt="" draggable="false" />
+            </div>
+
+            <article
+              v-if="caseDetailMounted"
+              ref="caseDetailEl"
+              class="case-detail"
+              :class="{ 'is-visible': caseDetailVisible }"
+              :style="caseOverlayStyle"
+              aria-label="Case detail"
+            >
+              <section class="case-detail__hero">
+                <div class="case-detail__visual" :class="{ 'is-ghosted': caseTransitionMounted }">
+                  <img :src="openedCaseDetail.hero" alt="" draggable="false" />
+                </div>
+                <button class="case-detail__back" type="button" aria-label="Back to portfolio" @click="closeCaseDetail">
+                  &lt;&lt; BACK
+                </button>
+                <div class="case-detail__title-row">
+                  <span class="case-detail__title-pill">{{ openedCaseDetail.title }}</span>
+                  <span class="case-detail__type-pill">{{ openedCaseDetail.type }}</span>
+                </div>
+                <div class="case-detail__tags">
+                  <span v-for="tag in openedCaseDetail.tags" :key="tag" class="case-detail__tag">{{ tag }}</span>
+                </div>
+              </section>
+
+              <section class="case-detail__text-block">
+                <p>{{ openedCaseDetail.lead }}</p>
+              </section>
+
+              <section v-if="openedCaseDetail.lendings" class="case-detail__media-band">
+                <img :src="openedCaseDetail.lendings" alt="" draggable="false" />
+              </section>
+
+              <section class="case-detail__text-block">
+                <p>{{ openedCaseDetail.objective }}</p>
+              </section>
+
+              <section v-if="openedCaseDetail.main || openedCaseDetail.market" class="case-detail__gallery">
+                <div v-if="openedCaseDetail.main" class="case-detail__main-shot">
+                  <img :src="openedCaseDetail.main" alt="" draggable="false" />
+                </div>
+                <div v-if="openedCaseDetail.market" class="case-detail__market-shot">
+                  <img :src="openedCaseDetail.market" alt="" draggable="false" />
+                </div>
+              </section>
+
+              <section class="contact contact--detail" aria-label="Contacts">
+                <div class="section-title section-title--light contact__title">
+                  <p class="section-title__script">Have an idea?</p>
+                  <p class="section-title__mono">Let's build it</p>
+                </div>
+
+                <div class="contact-grid">
+                  <a
+                    v-for="tile in contactTiles"
+                    :key="`detail-${tile.label}`"
+                    class="contact-tile"
+                    href="#"
+                    :aria-label="tile.label"
+                    @click.prevent
+                  >
+                    <span class="contact-tile__icon" :class="tile.iconClass">
+                      <img v-if="tile.icon" :src="tile.icon" alt="" draggable="false" />
+                    </span>
+                    <span class="badge badge--small">{{ tile.label }}</span>
+                  </a>
+                </div>
+              </section>
+
+              <footer class="footer" aria-label="Direct contacts">
+                <div class="footer__contacts">
+                  <span class="footer__pair">
+                    <span class="badge badge--small">Email:</span>
+                    <a href="mailto:allodriell@gmail.com">allodriell@gmail.com</a>
+                  </span>
+                  <span class="footer__pair">
+                    <span class="badge badge--small">Phone:</span>
+                    <a href="tel:+79816847121">+7 981-684-71-21</a>
+                  </span>
+                </div>
+                <div class="footer__socials">
+                  <span class="badge badge--small">Telegram</span>
+                  <AnimatedBadge
+                    v-for="social in footerAnimatedSocials"
+                    :key="`detail-${social}`"
+                    class="badge--small"
+                    :label="social"
+                  />
+                </div>
+              </footer>
+            </article>
           </div>
         </div>
         <div class="demo-caption" aria-hidden="true">
@@ -266,9 +372,14 @@ import designText from "../assets/design.svg";
 import engineerText from "../assets/engineer.svg";
 import belousovText from "../assets/belousov.svg";
 import seraphimText from "../assets/seraphim.svg";
-import telegramIcon from "../assets/telegram.svg";
-import githubIcon from "../assets/github.svg";
-import hhIcon from "../assets/hh.svg";
+import telegramIcon from "../assets/contact-telegram.svg";
+import githubIcon from "../assets/contact-github.svg";
+import linkedinIcon from "../assets/contact-linkedin.svg";
+import hhIcon from "../assets/contact-hh.svg";
+import nloDetailHero from "../assets/case-nlo-hero.png";
+import nloDetailLendings from "../assets/case-nlo-lendings.png";
+import nloDetailMain from "../assets/case-nlo-main.png";
+import nloDetailMarket from "../assets/case-nlo-market.png";
 
 const timing = {
   resize: 190,
@@ -301,6 +412,22 @@ const cases = [
   },
 ];
 
+const caseDetails = {
+  nlo: {
+    title: "NLO",
+    type: "Internet Market",
+    tags: ["Interface", "E-comerce", "CJM", "User Flow", "Mind Map"],
+    hero: nloDetailHero,
+    lead:
+      "NLO Retail is an online store project for a brand-name sneaker retailer that previously operated via a Telegram shop.",
+    objective:
+      "The objective was to transition the business to a full-fledged e-commerce platform, ensuring external security, curating the product selection, and preparing the brand for scaling.",
+    lendings: nloDetailLendings,
+    main: nloDetailMain,
+    market: nloDetailMarket,
+  },
+};
+
 const stats = reactive([
   { label: "Years Experience", target: 3, suffix: "+", display: "3+", counted: false },
   { label: "Projects", target: 21, suffix: "+", display: "21+", counted: false },
@@ -324,7 +451,7 @@ const aboutLines = [
 const contactTiles = [
   { label: "Telegram", icon: telegramIcon, iconClass: "contact-tile__icon--telegram" },
   { label: "GitHub", icon: githubIcon, iconClass: "contact-tile__icon--github" },
-  { label: "Linkedin", icon: "", iconClass: "contact-tile__icon--linkedin" },
+  { label: "Linkedin", icon: linkedinIcon, iconClass: "contact-tile__icon--linkedin" },
   { label: "HH.ru", icon: hhIcon, iconClass: "contact-tile__icon--hh" },
 ];
 
@@ -368,6 +495,33 @@ const deviceScale = ref(1);
 const frameActive = ref(false);
 const aboutVideoReveal = ref(0);
 const aboutReadable = ref(false);
+const caseDetailEl = ref(null);
+const caseDetailMounted = ref(false);
+const caseDetailVisible = ref(false);
+const caseTransitionMounted = ref(false);
+const caseTransitionPhase = ref("origin");
+const openedCaseIndex = ref(0);
+const caseOverlay = reactive({
+  left: 0,
+  top: 0,
+  width: 393,
+  height: 700,
+  heroHeight: 403,
+});
+const caseTransition = reactive({
+  fromLeft: 0,
+  fromTop: 0,
+  fromWidth: 311,
+  fromHeight: 349,
+  fullLeft: 0,
+  fullTop: 0,
+  fullWidth: 393,
+  fullHeight: 700,
+  toLeft: 0,
+  toTop: 0,
+  toWidth: 393,
+  toHeight: 403,
+});
 
 const drag = reactive({
   pointerId: null,
@@ -412,7 +566,18 @@ let motionQuery;
 let motionListener;
 let frameQuery;
 let frameListener;
+let lastDragDistance = 0;
+let lastDragAt = 0;
+let caseTransitionRun = 0;
 const loadingTimers = [];
+
+const caseTransitionTiming = {
+  startDelay: 110,
+  expand: 760,
+  hold: 160,
+  pageFade: 220,
+  settle: 460,
+};
 
 const demoMetrics = {
   width: 1920,
@@ -422,6 +587,23 @@ const demoMetrics = {
 const currentCase = computed(() => cases[current.value]);
 const behindCase = computed(() => cases[behindIndex.value]);
 const casePageLabel = computed(() => `${current.value + 1}/${cases.length}`);
+const openedCase = computed(() => cases[openedCaseIndex.value] || currentCase.value);
+const openedCaseDetail = computed(() => {
+  const item = openedCase.value;
+  return (
+    caseDetails[item.id] || {
+      title: item.title,
+      type: item.type,
+      tags: item.tags,
+      hero: item.image,
+      lead: `${item.title} case detail is being assembled.`,
+      objective: "The transition animation is available for this selected case card.",
+      lendings: "",
+      main: "",
+      market: "",
+    }
+  );
+});
 
 const demoShellStyle = computed(() => ({
   "--device-scale": deviceScale.value.toFixed(3),
@@ -467,6 +649,34 @@ const activeVisualStyle = computed(() => ({
   "--exit-x": `${exit.x}px`,
   "--exit-y": `${exit.y}px`,
   "--exit-rotate": `${exit.rotate}deg`,
+}));
+
+const caseOverlayStyle = computed(() => ({
+  "--case-overlay-left": `${caseOverlay.left}px`,
+  "--case-overlay-top": `${caseOverlay.top}px`,
+  "--case-overlay-width": `${caseOverlay.width}px`,
+  "--case-overlay-height": `${caseOverlay.height}px`,
+  "--case-detail-hero-image-height": `${caseOverlay.heroHeight}px`,
+}));
+
+const caseTransitionStyle = computed(() => ({
+  "--case-from-left": `${caseTransition.fromLeft}px`,
+  "--case-from-top": `${caseTransition.fromTop}px`,
+  "--case-from-width": `${caseTransition.fromWidth}px`,
+  "--case-from-height": `${caseTransition.fromHeight}px`,
+  "--case-full-left": `${caseTransition.fullLeft}px`,
+  "--case-full-top": `${caseTransition.fullTop}px`,
+  "--case-full-width": `${caseTransition.fullWidth}px`,
+  "--case-full-height": `${caseTransition.fullHeight}px`,
+  "--case-to-left": `${caseTransition.toLeft}px`,
+  "--case-to-top": `${caseTransition.toTop}px`,
+  "--case-to-width": `${caseTransition.toWidth}px`,
+  "--case-to-height": `${caseTransition.toHeight}px`,
+}));
+
+const caseTransitionClasses = computed(() => ({
+  "is-fullscreen": caseTransitionPhase.value === "fullscreen",
+  "is-settled": caseTransitionPhase.value === "settled",
 }));
 
 function modulo(value, length) {
@@ -564,6 +774,60 @@ function getScrollTop() {
 function getMotionViewportHeight() {
   if (isFrameScrollerActive()) return scrollViewport.value.clientHeight;
   return window.innerHeight || document.documentElement.clientHeight;
+}
+
+function getCaseOverlayMetrics() {
+  const screen = scrollViewport.value;
+  const visualScale = frameActive.value ? deviceScale.value || 1 : 1;
+  const screenRect = screen?.getBoundingClientRect() || {
+    left: 0,
+    top: 0,
+    width: window.innerWidth || 393,
+    height: window.innerHeight || 700,
+  };
+  const cardRect = document.querySelector(".card-page")?.getBoundingClientRect() || screenRect;
+  const scrollTop = getScrollTop();
+  const screenWidth = screen?.clientWidth || screenRect.width / visualScale;
+  const targetWidth = Math.min((cardRect.width || screenRect.width) / visualScale, screenWidth);
+  const targetLeft = ((cardRect.left || screenRect.left) - screenRect.left) / visualScale;
+  const targetHeight = getMotionViewportHeight();
+  const heroHeight = Math.min(targetHeight * 0.72, targetWidth * (403 / 393));
+
+  return {
+    left: targetLeft,
+    top: scrollTop,
+    width: targetWidth,
+    height: targetHeight,
+    heroHeight: Math.max(320, heroHeight),
+    screenRect,
+    visualScale,
+  };
+}
+
+function getScreenContentRect(rect, metrics) {
+  const relativeTop = (rect.top - metrics.screenRect.top) / metrics.visualScale;
+
+  return {
+    left: (rect.left - metrics.screenRect.left) / metrics.visualScale,
+    top: isFrameScrollerActive() ? metrics.top + relativeTop : relativeTop,
+    width: rect.width / metrics.visualScale,
+    height: rect.height / metrics.visualScale,
+  };
+}
+
+function preloadImage(src) {
+  if (!src) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = resolve;
+    image.onerror = resolve;
+    image.src = src;
+  });
+}
+
+function preloadCaseAssets(detail) {
+  return Promise.all([detail.hero, detail.lendings, detail.main, detail.market].map(preloadImage));
 }
 
 function getRelativeTop(element) {
@@ -703,6 +967,105 @@ function resetDrag() {
   drag.pointerId = null;
 }
 
+function setCaseMetrics(metrics) {
+  caseOverlay.left = metrics.left;
+  caseOverlay.top = metrics.top;
+  caseOverlay.width = metrics.width;
+  caseOverlay.height = metrics.height;
+  caseOverlay.heroHeight = metrics.heroHeight;
+}
+
+async function openCaseDetail(event) {
+  if (locked.value || swiping.value || dragging.value || drag.tracking || caseDetailMounted.value) return;
+
+  if (performance.now() - lastDragAt < 240 && lastDragDistance > 8) return;
+
+  const sourceRect = activeVisual.value?.getBoundingClientRect();
+  if (!sourceRect) return;
+
+  openedCaseIndex.value = current.value;
+  const detail = openedCaseDetail.value;
+  const assetsReady = preloadCaseAssets(detail);
+  const metrics = getCaseOverlayMetrics();
+  const source = getScreenContentRect(sourceRect, metrics);
+  setCaseMetrics(metrics);
+
+  caseTransition.fromLeft = source.left;
+  caseTransition.fromTop = source.top;
+  caseTransition.fromWidth = source.width;
+  caseTransition.fromHeight = source.height;
+  caseTransition.fullLeft = metrics.left;
+  caseTransition.fullTop = metrics.top;
+  caseTransition.fullWidth = metrics.width;
+  caseTransition.fullHeight = metrics.height;
+  caseTransition.toLeft = metrics.left;
+  caseTransition.toTop = metrics.top;
+  caseTransition.toWidth = metrics.width;
+  caseTransition.toHeight = metrics.heroHeight;
+
+  locked.value = true;
+  const run = ++caseTransitionRun;
+  caseDetailMounted.value = true;
+  caseDetailVisible.value = false;
+  caseTransitionMounted.value = !reduceMotion.value;
+  caseTransitionPhase.value = "origin";
+  document.body.classList.add("is-case-detail-open");
+
+  if (event?.currentTarget?.blur) event.currentTarget.blur();
+
+  await nextTick();
+  caseDetailEl.value?.scrollTo?.({ top: 0, behavior: "instant" });
+
+  if (reduceMotion.value) {
+    caseDetailVisible.value = true;
+    caseTransitionMounted.value = false;
+    locked.value = false;
+    return;
+  }
+
+  await waitForPaint();
+  if (run !== caseTransitionRun) return;
+
+  await wait(caseTransitionTiming.startDelay);
+  if (run !== caseTransitionRun) return;
+  caseTransitionPhase.value = "fullscreen";
+
+  await wait(caseTransitionTiming.expand);
+  if (run !== caseTransitionRun) return;
+
+  await Promise.all([assetsReady, wait(caseTransitionTiming.hold)]);
+  if (run !== caseTransitionRun) return;
+  caseDetailVisible.value = true;
+
+  await wait(caseTransitionTiming.pageFade);
+  if (run !== caseTransitionRun) return;
+  caseTransitionPhase.value = "settled";
+
+  await wait(caseTransitionTiming.settle);
+  if (run !== caseTransitionRun) return;
+  caseTransitionMounted.value = false;
+  caseTransitionPhase.value = "origin";
+  locked.value = false;
+}
+
+function closeCaseDetail() {
+  if (!caseDetailMounted.value) return;
+
+  caseTransitionRun += 1;
+  locked.value = false;
+  caseDetailVisible.value = false;
+
+  window.setTimeout(
+    () => {
+      caseDetailMounted.value = false;
+      caseTransitionMounted.value = false;
+      caseTransitionPhase.value = "origin";
+      document.body.classList.remove("is-case-detail-open");
+    },
+    reduceMotion.value ? 1 : 360,
+  );
+}
+
 function startDrag(event) {
   if (locked.value || (event.pointerType === "mouse" && event.button !== 0)) return;
 
@@ -751,12 +1114,16 @@ function endDrag(event) {
   if (!drag.tracking || (drag.pointerId !== null && event.pointerId !== drag.pointerId)) return;
 
   if (!dragging.value) {
+    lastDragDistance = Math.hypot(drag.x, drag.y);
+    lastDragAt = performance.now();
     resetDrag();
     return;
   }
 
   dragging.value = false;
   drag.tracking = false;
+  lastDragDistance = Math.hypot(drag.x, drag.y);
+  lastDragAt = performance.now();
   const elapsed = Math.max(1, performance.now() - drag.startedAt);
   const velocity = Math.abs(drag.x) / elapsed;
   const shouldSwipe = Math.abs(drag.x) > 92 || (Math.abs(drag.x) > 54 && velocity > 0.42);
@@ -815,10 +1182,20 @@ async function goToNext(exitX = 260, exitY = -150) {
 }
 
 function handleCaseKey(event) {
-  if (event.key === "Enter" || event.key === " " || event.key === "ArrowRight") {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    openCaseDetail(event);
+    return;
+  }
+
+  if (event.key === "ArrowRight") {
     event.preventDefault();
     goToNext(260, -150);
   }
+}
+
+function handleWindowKeydown(event) {
+  if (event.key === "Escape") closeCaseDetail();
 }
 
 function animateStat(index) {
@@ -895,6 +1272,10 @@ function updateScrollMotion() {
     heroHeight.value = nextHeight;
     heroFolded.value = progress > 0.98;
     heroShift.value = 0;
+  }
+
+  if (caseDetailMounted.value) {
+    setCaseMetrics(getCaseOverlayMetrics());
   }
 
   if (aboutEl.value) {
@@ -1009,11 +1390,13 @@ onMounted(async () => {
   window.addEventListener("pointermove", moveDrag, { passive: false });
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
+  window.addEventListener("keydown", handleWindowKeydown);
 });
 
 onBeforeUnmount(() => {
   clearLoadingTimers();
   document.body.classList.remove("is-loading-card");
+  document.body.classList.remove("is-case-detail-open");
   revealObserver?.disconnect();
   countObserver?.disconnect();
   window.removeEventListener("scroll", requestScrollTick);
@@ -1023,6 +1406,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("pointermove", moveDrag);
   window.removeEventListener("pointerup", endDrag);
   window.removeEventListener("pointercancel", endDrag);
+  window.removeEventListener("keydown", handleWindowKeydown);
 
   if (scrollFrame) cancelAnimationFrame(scrollFrame);
   if (motionQuery && motionListener) {
