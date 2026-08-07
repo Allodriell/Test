@@ -17,10 +17,7 @@
                 <p :key="loadingGreetingIndex" class="loading-greeting">{{ activeLoadingMessage }}</p>
               </div>
               <p class="loading-status" aria-label="Loading">
-                Loading
-                <span class="loading-dots" aria-hidden="true">
-                  <span>.</span>
-                  <span>.</span>
+                Loading<span class="loading-dots" aria-hidden="true">
                   <span>.</span>
                   <span>.</span>
                   <span>.</span>
@@ -321,7 +318,8 @@ const contactTiles = [
 
 const footerAnimatedSocials = ["Instagram", "VK"];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
-const loadingStepDuration = 1820;
+const loadingStepDuration = 2598;
+const loadingExitDuration = 600;
 
 const heroShell = ref(null);
 const hero = ref(null);
@@ -497,7 +495,7 @@ function finishLoading() {
   queueLoadingTimer(() => {
     loadingMounted.value = false;
     document.body.classList.remove("is-loading-card");
-  }, 720);
+  }, loadingExitDuration);
 }
 
 function startLoadingSequence() {
@@ -521,7 +519,7 @@ function startLoadingSequence() {
     }, index * loadingStepDuration);
   });
 
-  queueLoadingTimer(finishLoading, loadingMessages.length * loadingStepDuration + 260);
+  queueLoadingTimer(finishLoading, (loadingMessages.length - 0.2303) * loadingStepDuration);
 }
 
 function isFrameScrollerActive() {
