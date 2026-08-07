@@ -281,24 +281,45 @@
                 </div>
               </section>
 
-              <section class="case-detail__text-block">
-                <p>{{ openedCaseDetail.lead }}</p>
+              <section class="case-detail__text-block case-detail-reveal case-detail-reveal--text">
+                <p class="case-detail__animated-copy">
+                  <span
+                    v-for="(line, index) in openedCaseDetail.leadLines"
+                    :key="`lead-${index}-${line}`"
+                    class="case-detail-line"
+                    :style="{ '--line-delay': `${index * 62}ms` }"
+                  >
+                    <span>{{ line }}</span>
+                  </span>
+                </p>
               </section>
 
-              <section v-if="openedCaseDetail.lendings" class="case-detail__media-band">
+              <section v-if="openedCaseDetail.lendings" class="case-detail__media-band case-detail-reveal case-detail-reveal--image">
                 <img :src="openedCaseDetail.lendings" alt="" draggable="false" />
               </section>
 
-              <section class="case-detail__text-block">
-                <p>{{ openedCaseDetail.objective }}</p>
+              <section class="case-detail__text-block case-detail-reveal case-detail-reveal--text">
+                <p class="case-detail__animated-copy">
+                  <span
+                    v-for="(line, index) in openedCaseDetail.objectiveLines"
+                    :key="`objective-${index}-${line}`"
+                    class="case-detail-line"
+                    :style="{ '--line-delay': `${index * 62}ms` }"
+                  >
+                    <span>{{ line }}</span>
+                  </span>
+                </p>
               </section>
 
-              <section v-if="openedCaseDetail.main || openedCaseDetail.market" class="case-detail__gallery">
-                <div v-if="openedCaseDetail.main" class="case-detail__main-shot">
-                  <img :src="openedCaseDetail.main" alt="" draggable="false" />
-                </div>
-                <div v-if="openedCaseDetail.market" class="case-detail__market-shot">
-                  <img :src="openedCaseDetail.market" alt="" draggable="false" />
+              <section v-if="openedCaseDetail.gallery.length" class="case-detail__gallery">
+                <div
+                  v-for="shot in openedCaseDetail.gallery"
+                  :key="shot.src"
+                  class="case-detail__gallery-shot case-detail-reveal case-detail-reveal--image"
+                  :class="shot.className"
+                  :style="shot.style"
+                >
+                  <img :src="shot.src" :class="shot.imageClass" alt="" draggable="false" />
                 </div>
               </section>
 
@@ -376,6 +397,16 @@ import nloDetailHero from "../assets/case-nlo-hero.png";
 import nloDetailLendings from "../assets/case-nlo-lendings.png";
 import nloDetailMain from "../assets/case-nlo-main.png";
 import nloDetailMarket from "../assets/case-nlo-market.png";
+import skillsDetailHero from "../assets/case-skills-hero.png";
+import skillsDetailLendings from "../assets/case-skills-lendings.png";
+import skillsDetailLogo from "../assets/case-skills-logo.png";
+import skillsDetailMedia from "../assets/case-skills-media.png";
+import skillsDetailMerch from "../assets/case-skills-merch.png";
+import blendDetailHero from "../assets/case-blend-hero.png";
+import blendDetailLendings from "../assets/case-blend-lendings.png";
+import blendDetailCms from "../assets/case-blend-cms.png";
+import blendDetailPreview from "../assets/case-blend-preview.png";
+import blendDetailPage from "../assets/case-blend-page.png";
 
 const timing = {
   resize: 190,
@@ -416,11 +447,123 @@ const caseDetails = {
     hero: nloDetailHero,
     lead:
       "NLO Retail is an online store project for a brand-name sneaker retailer that previously operated via a Telegram shop.",
+    leadLines: [
+      "NLO Retail is an online store",
+      "project for a brand-name sneaker",
+      "retailer that previously operated",
+      "via a Telegram shop.",
+    ],
     objective:
       "The objective was to transition the business to a full-fledged e-commerce platform, ensuring external security, curating the product selection, and preparing the brand for scaling.",
+    objectiveLines: [
+      "The objective was to transition the",
+      "business to a full-fledged",
+      "e-commerce platform, ensuring",
+      "external security, curating the",
+      "product selection, and preparing",
+      "the brand for scaling.",
+    ],
     lendings: nloDetailLendings,
-    main: nloDetailMain,
-    market: nloDetailMarket,
+    gallery: [
+      {
+        src: nloDetailMain,
+        className: "case-detail__shot--nlo-main",
+        imageClass: "case-detail__image--nlo-main",
+      },
+      {
+        src: nloDetailMarket,
+        className: "case-detail__shot--nlo-market",
+      },
+    ],
+  },
+  skills: {
+    title: "4Skills",
+    type: "Cybersport Team",
+    tags: ["Brand", "Logo", "Media", "Identity", "Merch"],
+    hero: skillsDetailHero,
+    lead:
+      '4Skills is an esports team affiliated with the Financial University that participates in the "Moscow Esports" project.',
+    leadLines: [
+      "4Skills is an esports team",
+      "affiliated with the Financial",
+      "University that participates in",
+      'the "Moscow Esports" project.',
+    ],
+    objective:
+      "The task was to develop a visual identity that would work effectively across social media, streams, merchandise, and offline activities.",
+    objectiveLines: [
+      "The task was to develop a visual",
+      "identity that would work effectively",
+      "across social media, streams,",
+      "merchandise, and offline activities.",
+    ],
+    lendings: skillsDetailLendings,
+    gallery: [
+      {
+        src: skillsDetailLogo,
+        className: "case-detail__shot--wide",
+        style: { aspectRatio: "1920 / 1080" },
+      },
+      {
+        src: skillsDetailMedia,
+        className: "case-detail__shot--square",
+        style: { aspectRatio: "1 / 1" },
+      },
+      {
+        src: skillsDetailMerch,
+        className: "case-detail__shot--merch",
+        style: { aspectRatio: "1959 / 900" },
+      },
+    ],
+  },
+  blend: {
+    title: "Blend",
+    type: "Low-Code Platform",
+    tags: ["UX-UI", "Inf.Architecture", "UX-Reserch", "A/B Test"],
+    hero: blendDetailHero,
+    lead:
+      "Blend is a low-code platform for building and managing large-scale projects. The product integrates database management, business processes, APIs, and the application's visual interface, enabling teams to build, test, and evolve complex digital products more quickly.",
+    leadLines: [
+      "Blend is a low-code platform for",
+      "building and managing large-scale",
+      "projects. The product integrates",
+      "database management, business",
+      "processes, APIs, and the",
+      "application's visual interface,",
+      "enabling teams to build, test, and",
+      "evolve complex digital products",
+      "more quickly.",
+    ],
+    objective:
+      'The project focused primarily on designing an interface that helps the user not merely "assemble a screen," but navigate the entire journey from the initial idea and hypothesis to data structures, process logic, and the product\'s visual design.',
+    objectiveLines: [
+      "The project focused primarily on",
+      "designing an interface that helps",
+      'the user not merely "assemble a',
+      'screen," but navigate the entire',
+      "journey from the initial idea and",
+      "hypothesis to data structures,",
+      "process logic, and the product's",
+      "visual design.",
+    ],
+    lendings: blendDetailLendings,
+    gallery: [
+      {
+        src: blendDetailCms,
+        className: "case-detail__shot--wide",
+        style: { aspectRatio: "2880 / 1620" },
+      },
+      {
+        src: blendDetailPreview,
+        className: "case-detail__shot--wide",
+        style: { aspectRatio: "2880 / 1616" },
+      },
+      {
+        src: blendDetailPage,
+        className: "case-detail__shot--wide",
+        style: { aspectRatio: "2880 / 1620" },
+      },
+    ],
   },
 };
 
@@ -557,6 +700,7 @@ const tagSlots = ref([]);
 let tagKey = 0;
 let revealObserver;
 let countObserver;
+let caseRevealObserver;
 let scrollFrame = 0;
 let motionQuery;
 let motionListener;
@@ -593,10 +737,11 @@ const openedCaseDetail = computed(() => {
       tags: item.tags,
       hero: item.image,
       lead: `${item.title} case detail is being assembled.`,
+      leadLines: [`${item.title} case detail is being assembled.`],
       objective: "The transition animation is available for this selected case card.",
+      objectiveLines: ["The transition animation is available for this selected case card."],
       lendings: "",
-      main: "",
-      market: "",
+      gallery: [],
     }
   );
 });
@@ -823,7 +968,49 @@ function preloadImage(src) {
 }
 
 function preloadCaseAssets(detail) {
-  return Promise.all([detail.hero, detail.lendings, detail.main, detail.market].map(preloadImage));
+  const gallerySources = detail.gallery?.map((shot) => shot.src) || [];
+  return Promise.all([detail.hero, detail.lendings, ...gallerySources].map(preloadImage));
+}
+
+function clearCaseDetailReveals() {
+  caseRevealObserver?.disconnect();
+  caseRevealObserver = null;
+}
+
+async function setupCaseDetailReveals() {
+  clearCaseDetailReveals();
+  await nextTick();
+
+  const root = caseDetailEl.value;
+  const revealItems = root ? Array.from(root.querySelectorAll(".case-detail-reveal")) : [];
+  if (!revealItems.length) return;
+
+  revealItems.forEach((item, index) => {
+    item.classList.remove("is-visible");
+    item.style.setProperty("--case-reveal-delay", `${Math.min(index * 70, 280)}ms`);
+  });
+
+  if (reduceMotion.value || !("IntersectionObserver" in window)) {
+    revealItems.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+
+  caseRevealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        caseRevealObserver?.unobserve(entry.target);
+      });
+    },
+    {
+      root,
+      threshold: 0.16,
+      rootMargin: "0px 0px -10% 0px",
+    },
+  );
+
+  revealItems.forEach((item) => caseRevealObserver.observe(item));
 }
 
 function getRelativeTop(element) {
@@ -1014,6 +1201,7 @@ async function openCaseDetail(event) {
 
   if (reduceMotion.value) {
     caseDetailVisible.value = true;
+    await setupCaseDetailReveals();
     caseTransitionMounted.value = false;
     locked.value = false;
     return;
@@ -1032,6 +1220,7 @@ async function openCaseDetail(event) {
   await Promise.all([assetsReady, wait(caseTransitionTiming.hold)]);
   if (run !== caseTransitionRun) return;
   caseDetailVisible.value = true;
+  await setupCaseDetailReveals();
 
   await wait(caseTransitionTiming.pageFade);
   if (run !== caseTransitionRun) return;
@@ -1048,6 +1237,7 @@ function closeCaseDetail() {
   if (!caseDetailMounted.value) return;
 
   caseTransitionRun += 1;
+  clearCaseDetailReveals();
   locked.value = false;
   caseDetailVisible.value = false;
 
@@ -1395,6 +1585,7 @@ onBeforeUnmount(() => {
   document.body.classList.remove("is-case-detail-open");
   revealObserver?.disconnect();
   countObserver?.disconnect();
+  clearCaseDetailReveals();
   window.removeEventListener("scroll", requestScrollTick);
   window.removeEventListener("resize", requestScrollTick);
   window.removeEventListener("resize", updateDeviceScale);
