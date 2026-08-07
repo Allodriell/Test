@@ -596,9 +596,9 @@ const contactTiles = [
 
 const footerAnimatedSocials = ["Instagram", "VK", "Twitter"];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
-const loadingStepDuration = 2598;
-const loadingCrossfadeDuration = 900;
-const loadingExitDuration = 600;
+const loadingStepDuration = 2400;
+const loadingCrossfadeDuration = 820;
+const loadingExitDuration = 520;
 
 const heroShell = ref(null);
 const hero = ref(null);
