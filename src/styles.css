@@ -1426,6 +1426,15 @@ img {
     box-shadow: none;
   }
 
+  .phone-frame__screen .case-card {
+    padding: 18px;
+  }
+
+  .phone-frame__screen .case-overlay {
+    top: 13px;
+    transform: none;
+  }
+
   .loading-overlay {
     position: absolute;
     height: 100%;
