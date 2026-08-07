@@ -220,28 +220,26 @@
           <span class="badge badge--small">{{ tile.label }}</span>
         </a>
       </div>
-    </section>
 
-    <footer class="footer" aria-label="Direct contacts">
-      <div class="footer__contacts">
-        <span class="footer__pair">
+      <div class="contact-links">
+        <span class="contact-link">
           <span class="badge badge--small">Email:</span>
           <a href="mailto:allodriell@gmail.com">allodriell@gmail.com</a>
         </span>
-        <span class="footer__pair">
-          <span class="badge badge--small">Phone:</span>
+        <span class="contact-link">
+          <span class="badge badge--small">Phone</span>
           <a href="tel:+79816847121">+7 981-684-71-21</a>
         </span>
       </div>
-      <div class="footer__socials">
-        <span class="badge badge--small">Telegram</span>
-        <AnimatedBadge
-          v-for="social in footerAnimatedSocials"
-          :key="social"
-          class="badge--small"
-          :label="social"
-        />
-      </div>
+    </section>
+
+    <footer class="footer" aria-label="Direct contacts">
+      <AnimatedBadge
+        v-for="social in footerAnimatedSocials"
+        :key="social"
+        class="badge--small"
+        :label="social"
+      />
     </footer>
 
     <span ref="measureTitle" class="measure measure--title"></span>
@@ -325,28 +323,26 @@
                     <span class="badge badge--small">{{ tile.label }}</span>
                   </a>
                 </div>
-              </section>
 
-              <footer class="footer" aria-label="Direct contacts">
-                <div class="footer__contacts">
-                  <span class="footer__pair">
+                <div class="contact-links">
+                  <span class="contact-link">
                     <span class="badge badge--small">Email:</span>
                     <a href="mailto:allodriell@gmail.com">allodriell@gmail.com</a>
                   </span>
-                  <span class="footer__pair">
-                    <span class="badge badge--small">Phone:</span>
+                  <span class="contact-link">
+                    <span class="badge badge--small">Phone</span>
                     <a href="tel:+79816847121">+7 981-684-71-21</a>
                   </span>
                 </div>
-                <div class="footer__socials">
-                  <span class="badge badge--small">Telegram</span>
-                  <AnimatedBadge
-                    v-for="social in footerAnimatedSocials"
-                    :key="`detail-${social}`"
-                    class="badge--small"
-                    :label="social"
-                  />
-                </div>
+              </section>
+
+              <footer class="footer" aria-label="Direct contacts">
+                <AnimatedBadge
+                  v-for="social in footerAnimatedSocials"
+                  :key="`detail-${social}`"
+                  class="badge--small"
+                  :label="social"
+                />
               </footer>
             </article>
           </div>
@@ -455,7 +451,7 @@ const contactTiles = [
   { label: "HH.ru", icon: hhIcon, iconClass: "contact-tile__icon--hh" },
 ];
 
-const footerAnimatedSocials = ["Instagram", "VK"];
+const footerAnimatedSocials = ["Instagram", "VK", "Twitter"];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
 const loadingStepDuration = 2598;
 const loadingCrossfadeDuration = 900;
