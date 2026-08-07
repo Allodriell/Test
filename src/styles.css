@@ -1369,11 +1369,11 @@ img {
 
   .phone-frame {
     position: absolute;
-    left: 780px;
-    top: 155px;
+    left: 778px;
+    top: 154px;
     z-index: 2;
-    width: 362px;
-    height: 770px;
+    width: 365px;
+    height: 773px;
   }
 
   .phone-frame__screen {
@@ -1397,7 +1397,7 @@ img {
 
   .phone-frame__island {
     position: absolute;
-    left: 133px;
+    left: calc(50% - 47px);
     top: 10px;
     z-index: 5;
     display: block;
