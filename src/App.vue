@@ -321,6 +321,7 @@ const contactTiles = [
 
 const footerAnimatedSocials = ["Instagram", "VK"];
 const loadingMessages = ["Hello", "Welcome to", "Digital Card"];
+const loadingStepDuration = 1820;
 
 const heroShell = ref(null);
 const hero = ref(null);
@@ -517,10 +518,10 @@ function startLoadingSequence() {
     if (index === 0) return;
     queueLoadingTimer(() => {
       loadingGreetingIndex.value = index;
-    }, index * 1180);
+    }, index * loadingStepDuration);
   });
 
-  queueLoadingTimer(finishLoading, loadingMessages.length * 1180 + 120);
+  queueLoadingTimer(finishLoading, loadingMessages.length * loadingStepDuration + 260);
 }
 
 function isFrameScrollerActive() {

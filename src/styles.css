@@ -144,15 +144,13 @@ img {
 .loading-greeting {
   margin: 0;
   max-width: 100%;
-  font-family: "Handjet Local", "Roboto Mono Local", monospace;
-  font-size: clamp(34px, 11vw, 48px);
-  line-height: 0.95;
+  font-family: "Ephesis Local", cursive;
+  font-size: clamp(54px, 16vw, 72px);
+  line-height: 0.9;
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-variation-settings: "ELGR" 1, "ELSH" 2;
+  letter-spacing: 0;
   white-space: normal;
-  animation: loadingGreeting 1180ms var(--ease-in-out) both;
+  animation: loadingGreeting 1780ms var(--ease-in-out) both;
 }
 
 .loading-status {
@@ -178,23 +176,23 @@ img {
   display: inline-block;
   opacity: 0.18;
   transform: translateY(2px);
-  animation: loadingDot 1200ms ease-in-out infinite;
+  animation: loadingDot 1520ms ease-in-out infinite;
 }
 
 .loading-dots span:nth-child(2) {
-  animation-delay: 120ms;
+  animation-delay: 140ms;
 }
 
 .loading-dots span:nth-child(3) {
-  animation-delay: 240ms;
+  animation-delay: 280ms;
 }
 
 .loading-dots span:nth-child(4) {
-  animation-delay: 360ms;
+  animation-delay: 420ms;
 }
 
 .loading-dots span:nth-child(5) {
-  animation-delay: 480ms;
+  animation-delay: 560ms;
 }
 
 @keyframes loadingGreeting {
@@ -205,7 +203,7 @@ img {
   }
 
   24%,
-  68% {
+  72% {
     opacity: 1;
     filter: blur(0);
     transform: translateY(0);
@@ -1137,7 +1135,7 @@ img {
   }
 
   .loading-greeting {
-    font-size: 42px;
+    font-size: 64px;
   }
 
   .demo-caption {
