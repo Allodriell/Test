@@ -461,18 +461,15 @@ img {
 }
 
 .about {
-  --reveal: 0;
   --video-reveal: 0;
-  --video-scale: 0.84;
-  --video-opacity: 0.68;
-  --video-y: 22px;
+  --video-scale: 0.62;
+  --video-opacity: 0.72;
+  --video-y: 18px;
   width: 100%;
-  height: var(--about-current-height, auto);
   margin-inline: auto;
   overflow: hidden;
   background: var(--ink);
   color: var(--paper);
-  will-change: height;
 }
 
 .about__inner {
@@ -518,9 +515,9 @@ img {
 }
 
 .video-frame {
-  width: min(223px, 100%);
-  height: 124px;
-  align-self: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  align-self: stretch;
   border: 1px solid rgba(245, 237, 231, 0.18);
   background: rgba(245, 237, 231, 0.025);
   opacity: var(--video-opacity);
