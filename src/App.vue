@@ -1,10 +1,10 @@
 <template>
   <div class="demo-shell" :style="demoShellStyle">
+    <img class="demo-flower demo-flower--left" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
+    <img class="demo-flower demo-flower--right" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
     <div class="demo-device">
       <div class="demo-device__inner">
         <img class="demo-device__mockup" :src="mockupScene" alt="" draggable="false" aria-hidden="true" />
-        <img class="demo-flower demo-flower--left" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
-        <img class="demo-flower demo-flower--right" :src="flowerScene" alt="" draggable="false" aria-hidden="true" />
         <div class="phone-frame" aria-label="iPhone 16 preview">
           <span class="phone-frame__island" aria-hidden="true"></span>
           <div
@@ -751,6 +751,9 @@ let revealObserver;
 let countObserver;
 let caseRevealObserver;
 let scrollFrame = 0;
+let smoothScrollFrame = 0;
+let smoothScrollCurrent = 0;
+let smoothScrollTarget = 0;
 let motionQuery;
 let motionListener;
 let frameQuery;
@@ -799,6 +802,9 @@ const demoShellStyle = computed(() => ({
   "--device-scale": deviceScale.value.toFixed(3),
   "--device-width": `${(demoMetrics.width * deviceScale.value).toFixed(2)}px`,
   "--device-height": `${(demoMetrics.height * deviceScale.value).toFixed(2)}px`,
+  "--flower-top": `${(149 * deviceScale.value).toFixed(2)}px`,
+  "--flower-width": `${(393 * deviceScale.value).toFixed(2)}px`,
+  "--flower-height": `${(730 * deviceScale.value).toFixed(2)}px`,
 }));
 
 const heroShellStyle = computed(() => {
@@ -1087,6 +1093,7 @@ function setupFramePreference() {
 
   frameListener = (event) => {
     frameActive.value = event.matches;
+    cancelSmoothFrameScroll();
     updateDeviceScale();
     requestScrollTick();
   };
@@ -1211,6 +1218,7 @@ async function openCaseDetail(event) {
   if (locked.value || swiping.value || dragging.value || drag.tracking || caseDetailMounted.value) return;
 
   if (performance.now() - lastDragAt < 240 && lastDragDistance > 8) return;
+  cancelSmoothFrameScroll();
 
   const sourceRect = activeVisual.value?.getBoundingClientRect();
   if (!sourceRect) return;
@@ -1534,6 +1542,67 @@ function requestScrollTick() {
   });
 }
 
+function getWheelDelta(event, scroller) {
+  const unit = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? scroller.clientHeight : 1;
+  return event.deltaY * unit;
+}
+
+function cancelSmoothFrameScroll() {
+  if (smoothScrollFrame) cancelAnimationFrame(smoothScrollFrame);
+  smoothScrollFrame = 0;
+  smoothScrollCurrent = scrollViewport.value?.scrollTop || 0;
+  smoothScrollTarget = smoothScrollCurrent;
+}
+
+function tickSmoothFrameScroll() {
+  const scroller = scrollViewport.value;
+  if (!isFrameScrollerActive() || !scroller || caseDetailMounted.value) {
+    cancelSmoothFrameScroll();
+    return;
+  }
+
+  const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+  smoothScrollTarget = clamp(smoothScrollTarget, 0, maxScroll);
+  const distance = smoothScrollTarget - smoothScrollCurrent;
+
+  if (Math.abs(distance) < 0.35) {
+    smoothScrollCurrent = smoothScrollTarget;
+    scroller.scrollTop = smoothScrollTarget;
+    smoothScrollFrame = 0;
+    requestScrollTick();
+    return;
+  }
+
+  smoothScrollCurrent += distance * 0.18;
+  scroller.scrollTop = smoothScrollCurrent;
+  requestScrollTick();
+  smoothScrollFrame = requestAnimationFrame(tickSmoothFrameScroll);
+}
+
+function handleFrameWheel(event) {
+  const scroller = scrollViewport.value;
+  if (!isFrameScrollerActive() || reduceMotion.value || caseDetailMounted.value || !scroller || event.ctrlKey) return;
+  if (event.target instanceof Element && event.target.closest(".case-detail")) return;
+  if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+  const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+  const delta = getWheelDelta(event, scroller);
+  if (!maxScroll || !delta) return;
+
+  event.preventDefault();
+
+  if (!smoothScrollFrame) {
+    smoothScrollCurrent = scroller.scrollTop;
+    smoothScrollTarget = scroller.scrollTop;
+  }
+
+  smoothScrollTarget = clamp(smoothScrollTarget + delta * 1.12, 0, maxScroll);
+
+  if (!smoothScrollFrame) {
+    smoothScrollFrame = requestAnimationFrame(tickSmoothFrameScroll);
+  }
+}
+
 function initCases() {
   const item = currentCase.value;
 
@@ -1551,6 +1620,7 @@ function setupMotionPreference() {
 
   motionListener = (event) => {
     reduceMotion.value = event.matches;
+    if (event.matches) cancelSmoothFrameScroll();
     updateScrollMotion();
   };
 
@@ -1622,6 +1692,7 @@ onMounted(async () => {
   window.addEventListener("resize", requestScrollTick);
   window.addEventListener("resize", updateDeviceScale);
   scrollViewport.value?.addEventListener("scroll", requestScrollTick, { passive: true });
+  scrollViewport.value?.addEventListener("wheel", handleFrameWheel, { passive: false });
   window.addEventListener("pointermove", moveDrag, { passive: false });
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
@@ -1639,12 +1710,14 @@ onBeforeUnmount(() => {
   window.removeEventListener("resize", requestScrollTick);
   window.removeEventListener("resize", updateDeviceScale);
   scrollViewport.value?.removeEventListener("scroll", requestScrollTick);
+  scrollViewport.value?.removeEventListener("wheel", handleFrameWheel);
   window.removeEventListener("pointermove", moveDrag);
   window.removeEventListener("pointerup", endDrag);
   window.removeEventListener("pointercancel", endDrag);
   window.removeEventListener("keydown", handleWindowKeydown);
 
   if (scrollFrame) cancelAnimationFrame(scrollFrame);
+  cancelSmoothFrameScroll();
   if (motionQuery && motionListener) {
     motionQuery.removeEventListener?.("change", motionListener);
   }

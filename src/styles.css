@@ -1334,6 +1334,7 @@ img {
   }
 
   .demo-shell {
+    position: relative;
     min-height: 100svh;
     display: grid;
     place-items: center;
@@ -1370,11 +1371,11 @@ img {
 
   .demo-flower {
     position: absolute;
-    top: 149px;
-    z-index: 1;
+    top: calc((100svh - var(--device-height, 100svh)) / 2 + var(--flower-top, 149px));
+    z-index: 3;
     display: block;
-    width: 393px;
-    height: 730px;
+    width: var(--flower-width, 393px);
+    height: var(--flower-height, 730px);
     object-fit: fill;
     pointer-events: none;
     user-select: none;
