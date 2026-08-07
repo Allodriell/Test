@@ -71,15 +71,15 @@
       id="about"
       aria-label="About me"
     >
-      <div class="about__inner">
-        <div class="section-title section-title--light reveal-on-scroll">
+      <div ref="aboutInnerEl" class="about__inner">
+        <div ref="aboutTitleEl" class="section-title section-title--light reveal-on-scroll">
           <p class="section-title__script">A designer's soul.</p>
           <p class="section-title__mono">An engineer's mind.</p>
         </div>
 
-        <div class="video-frame reveal-on-scroll" aria-label="Video frame"></div>
+        <div class="video-frame" aria-label="Video frame"></div>
 
-        <p class="about__copy" aria-label="About text">
+        <p ref="aboutCopyEl" class="about__copy" aria-label="About text">
           <span
             v-for="(line, index) in aboutLines"
             :key="line"
@@ -305,6 +305,9 @@ const hero = ref(null);
 const heroPhotoEl = ref(null);
 const scrollViewport = ref(null);
 const aboutEl = ref(null);
+const aboutInnerEl = ref(null);
+const aboutTitleEl = ref(null);
+const aboutCopyEl = ref(null);
 const activeVisual = ref(null);
 const measureTitle = ref(null);
 const measureType = ref(null);
@@ -325,6 +328,9 @@ const heroShift = ref(0);
 const deviceScale = ref(1);
 const frameActive = ref(false);
 const aboutReveal = ref(0);
+const aboutVideoReveal = ref(0);
+const aboutClosedHeight = ref(145);
+const aboutFullHeight = ref(560);
 const aboutReadable = ref(false);
 
 const drag = reactive({
@@ -402,7 +408,11 @@ const heroPhotoStyle = computed(() => ({
 
 const aboutStyle = computed(() => ({
   "--reveal": aboutReveal.value.toFixed(3),
-  "--about-content-width": `${(aboutEl.value?.parentElement?.clientWidth || 393).toFixed(2)}px`,
+  "--video-reveal": aboutVideoReveal.value.toFixed(3),
+  "--video-scale": (0.84 + aboutVideoReveal.value * 0.16).toFixed(3),
+  "--video-opacity": (0.68 + aboutVideoReveal.value * 0.32).toFixed(3),
+  "--video-y": `${((1 - aboutVideoReveal.value) * 22).toFixed(2)}px`,
+  "--about-current-height": `${getAboutHeight().toFixed(2)}px`,
 }));
 
 const activeVisualClasses = computed(() => [
@@ -462,6 +472,27 @@ function getRelativeTop(element) {
 
   const screenRect = scrollViewport.value.getBoundingClientRect();
   return rect.top - screenRect.top;
+}
+
+function getAboutHeight() {
+  if (reduceMotion.value) return Math.max(aboutFullHeight.value, aboutClosedHeight.value);
+
+  const closedHeight = aboutClosedHeight.value;
+  const fullHeight = Math.max(aboutFullHeight.value, closedHeight);
+  return closedHeight + (fullHeight - closedHeight) * aboutReveal.value;
+}
+
+function measureAbout() {
+  if (!aboutInnerEl.value || !aboutTitleEl.value) return;
+
+  const styles = window.getComputedStyle(aboutInnerEl.value);
+  const paddingTop = Number.parseFloat(styles.paddingTop) || 0;
+  const paddingBottom = Number.parseFloat(styles.paddingBottom) || 0;
+  const closedHeight = Math.ceil(paddingTop + aboutTitleEl.value.offsetHeight + paddingBottom);
+  const fullHeight = Math.ceil(aboutInnerEl.value.scrollHeight);
+
+  aboutClosedHeight.value = Math.max(1, closedHeight);
+  aboutFullHeight.value = Math.max(aboutClosedHeight.value, fullHeight);
 }
 
 function updateDeviceScale() {
@@ -789,12 +820,14 @@ function updateScrollMotion() {
 
   if (aboutEl.value) {
     const top = getRelativeTop(aboutEl.value);
-    const start = viewport * 0.92;
-    const end = viewport * 0.45;
+    const start = viewport * 0.9;
+    const end = viewport * 0.38;
     const progress = clamp((start - top) / Math.max(1, start - end), 0, 1);
+    const copyTop = aboutCopyEl.value ? getRelativeTop(aboutCopyEl.value) : viewport;
 
     aboutReveal.value = progress;
-    aboutReadable.value = progress > 0.88 || reduceMotion.value;
+    aboutVideoReveal.value = clamp((progress - 0.48) / 0.52, 0, 1);
+    aboutReadable.value = reduceMotion.value || (progress > 0.98 && copyTop < viewport * 0.45);
   }
 }
 
@@ -887,12 +920,14 @@ onMounted(async () => {
 
   initCases();
   await nextTick();
+  measureAbout();
   setupScrollAnimations();
   updateScrollMotion();
 
   window.addEventListener("scroll", requestScrollTick, { passive: true });
   window.addEventListener("resize", requestScrollTick);
   window.addEventListener("resize", updateDeviceScale);
+  window.addEventListener("resize", measureAbout);
   scrollViewport.value?.addEventListener("scroll", requestScrollTick, { passive: true });
   window.addEventListener("pointermove", moveDrag, { passive: false });
   window.addEventListener("pointerup", endDrag);
@@ -905,6 +940,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", requestScrollTick);
   window.removeEventListener("resize", requestScrollTick);
   window.removeEventListener("resize", updateDeviceScale);
+  window.removeEventListener("resize", measureAbout);
   scrollViewport.value?.removeEventListener("scroll", requestScrollTick);
   window.removeEventListener("pointermove", moveDrag);
   window.removeEventListener("pointerup", endDrag);
