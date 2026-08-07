@@ -202,7 +202,7 @@
     <section class="contact" id="contact" aria-label="Contacts">
       <div class="section-title section-title--light contact__title reveal-on-scroll">
         <p class="section-title__script">Have an idea?</p>
-        <p class="section-title__mono">Let's build it</p>
+        <p class="section-title__mono">Let's create it</p>
       </div>
 
       <div class="contact-grid">
@@ -305,7 +305,7 @@
               <section class="contact contact--detail" aria-label="Contacts">
                 <div class="section-title section-title--light contact__title">
                   <p class="section-title__script">Have an idea?</p>
-                  <p class="section-title__mono">Let's build it</p>
+                  <p class="section-title__mono">Let's create it</p>
                 </div>
 
                 <div class="contact-grid">
